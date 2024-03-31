@@ -71,6 +71,8 @@ lines(1:204, data$value-fit_select$residuals, type="l", col="red")
 
 # Forecast for 3 months ahead
 forecast = predict(fit_select, n.ahead=3)
+forecast_line = c((data$value-fit_select$residuals)[204],forecast$pred)
+lines(204:207, forecast_line, col="purple")
 lines(205:207, forecast$pred, type="o", col="purple")
 lines(205:207, forecast$pred-1.96*forecast$se, col="blue")
 lines(205:207, forecast$pred+1.96*forecast$se, col="blue")
