@@ -13,14 +13,15 @@ axis(1, at=c(1, 50, 100, 150, 200), labels=dates)
 lines(1:204, data$value, type="l")
 
 
-# Apply Lag-12 Differencing to Remove Seasonal Component
+# Apply Lag-12 Differencing to Remove Seasonality Component
 D1 = diff(data$value, lag=12)
-# Plot Differenced Time Series
+# Plot Time Series After Differencing
 plot(1:192,y = D1, xlim=c(1,192), ylim=c(-3,10), main = "Time Series After Differencing (d=0, D=1)")
 lines(1:192, D1, type="l")
 
-# Apply Difference to Remove Trending Component
+# Apply Lag-1 Differencing to Remove Trend Component
 d1_D1 = diff(D1)
+# Plot Time Series After Differencing
 plot(1:191,y = d1_D1, xlim=c(1,191), ylim=c(-7,10), main = "Time Series After Differencing (d=1, D=1)")
 lines(1:191, d1_D1, type="l")
 
