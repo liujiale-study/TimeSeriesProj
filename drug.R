@@ -58,7 +58,14 @@ print(fit4) # AIC: 544.9
 # fit1 has lowest AIC 
 
 # Select Fit
+# SARIMA(0,1,6,0,1,2,12)
 fit_select=fit1
+
+# Improve selected model based on ACF of Residuals
+# Significant Residuals at time lag 23, change q to 23
+fit_select = arima(data$value, order=c(0,1,23), seasonal=list(order=c(0,1,2), period=12))
+print(fit_select) # Fit AIC improved from 523.17 to 512.94
+tsdiag(fit_select)
 
 # Plot Time Series
 dates = c(data$date[1], data$date[50], data$date[100], data$date[150], data$date[200])
