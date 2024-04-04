@@ -102,5 +102,4 @@ lines(192:204, forecast_line, col="purple")
 lines(193:204, forecast_pred, type="o", col="purple")
 
 # Print Overall Accuracy
-library(forecast)
 print(accuracy(c(fitted_model, forecast_pred), full_set))
