@@ -26,17 +26,20 @@ print(paste0("Lambda: ", lambda))
 
 # Apply Box Cox Transformation
 train_set = BoxCox(train_set,lambda)
+# Plot Time Series After Box-Cox Transformation
+plot(1:192,y = train_set, xlim=c(1,192), ylim=c(0.5,3.5), main = "Time Series After Box-Cox Transformation")
+lines(1:192, train_set, type="l")
 
 # Apply Lag-12 Differencing to Remove Seasonality Component
 D1 = diff(train_set, lag=12)
 # Plot Time Series After Differencing
-plot(1:180,y = D1, xlim=c(1,156), ylim=c(-3,10), main = "Time Series After Differencing (d=0, D=1)")
+plot(1:180,y = D1, xlim=c(1,180), ylim=c(-0.3,0.3), main = "Time Series After Differencing (d=0, D=1)")
 lines(1:180, D1, type="l")
 
 # Apply Lag-1 Differencing to Remove Trend Component
 d1_D1 = diff(D1)
 # Plot Time Series After Differencing
-plot(1:179,y = d1_D1, xlim=c(1,155), ylim=c(-7,10), main = "Time Series After Differencing (d=1, D=1)")
+plot(1:179,y = d1_D1, xlim=c(1,179), ylim=c(-0.3,0.3), main = "Time Series After Differencing (d=1, D=1)")
 lines(1:179, d1_D1, type="l")
 
 # View ACF and PACF Plots
