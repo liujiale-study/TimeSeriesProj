@@ -41,23 +41,23 @@ lines(1:179, d1_D1, type="l")
 
 # View ACF and PACF Plots
 # ACF
-# (based on lag 12, 24, 36 etc.) P = 0 & Q = 3, (based on lag 1 to 11) p = 0 & q = 10
-acf(d1_D1, lag.max=50)
+# (based on lag 12, 24, 36 etc.) P = 0 & Q = 6, (based on lag 1 to 11) p = 0 & q = 10
+acf(d1_D1, lag.max=100)
 # PACF
 # (based on lag 12, 24, 36 etc.) P = 0 & Q = 0, (based on lag 1 to 11) p = 8 & q = 0
-pacf(d1_D1, lag.max=50)
+pacf(d1_D1, lag.max=100)
 
 # SARIMA(p,d,q,P,D,Q,s) fits:
-# SARIMA(0,1,10,0,1,3,12)
-fit1 = arima(train_set, order=c(0,1,10), seasonal=list(order=c(0,1,3), period=12))
+# SARIMA(0,1,10,0,1,6,12)
+fit1 = arima(train_set, order=c(0,1,10), seasonal=list(order=c(0,1,6), period=12))
 tsdiag(fit1)
 
 # SARIMA(0,1,10,0,1,0,12)
 fit2 = arima(train_set, order=c(0,1,10), seasonal=list(order=c(0,1,0), period=12))
 tsdiag(fit2)
 
-# SARIMA(8,1,0,0,1,3,12)
-fit3 = arima(train_set, order=c(8,1,0), seasonal=list(order=c(0,1,3), period=12))
+# SARIMA(8,1,0,0,1,6,12)
+fit3 = arima(train_set, order=c(8,1,0), seasonal=list(order=c(0,1,6), period=12))
 tsdiag(fit3)
 
 # SARIMA(8,1,0,0,1,0,12)
@@ -65,23 +65,19 @@ fit4 = arima(train_set, order=c(8,1,0), seasonal=list(order=c(0,1,0), period=12)
 tsdiag(fit4)
 
 # Check AIC
-print(fit1) # AIC: -561.43
+print(fit1) # AIC: -557.67
 print(fit2) # AIC: -541.05
-print(fit3) # AIC: -564.14
+print(fit3) # AIC: -560.1
 print(fit4) # AIC: -531.31
 # fit3 has lowest AIC 
 
 # Select Fit
-# SARIMA(8,1,0,0,1,3,12)
+# SARIMA(8,1,0,0,1,6,12)
 fit_select=fit3
 
 # View ACF of Residuals
-acf(residuals(fit_select), lag.max = 50)
+acf(residuals(fit_select), lag.max = 100) # Residuals not significant
 
-# Significant residual at lag-37, add 1 to q 
-fit_select = arima(train_set, order=c(8,1,1), seasonal=list(order=c(0,1,3), period=12))
-print(fit_select) 
-tsdiag(fit_select) # Ensure model is adequate
 
 # Plot Time Series
 dates = c(data$date[1], data$date[50], data$date[100], data$date[150], data$date[200])
