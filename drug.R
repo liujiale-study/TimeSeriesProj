@@ -19,6 +19,13 @@ len_valid = 12 # 12 for 1 year forecast
 train_set = head(full_set, len_fullset-len_valid)
 valid_set = tail(full_set, len_valid)
 
+# Find Box Cox
+library(forecast)
+lambda = BoxCox.lambda(train_set)
+print(paste0("Lambda: ", lambda))
+
+# Apply Box Cox Transformation
+train_set = BoxCox(train_set,lambda)
 
 # Apply Lag-12 Differencing to Remove Seasonality Component
 D1 = diff(train_set, lag=12)
@@ -34,46 +41,46 @@ lines(1:179, d1_D1, type="l")
 
 # View ACF and PACF Plots
 # ACF
-# (based on lag 12, 24, 36 etc.) P = 0 & Q = 2, (based on lag 1 to 11) p = 0 & q = 6
+# (based on lag 12, 24, 36 etc.) P = 0 & Q = 3, (based on lag 1 to 11) p = 0 & q = 10
 acf(d1_D1, lag.max=50)
 # PACF
-# (based on lag 12, 24, 36 etc.) P = 0 & Q = 0, (based on lag 1 to 11) p = 4 & q = 0
+# (based on lag 12, 24, 36 etc.) P = 0 & Q = 0, (based on lag 1 to 11) p = 8 & q = 0
 pacf(d1_D1, lag.max=50)
 
 # SARIMA(p,d,q,P,D,Q,s) fits:
-# SARIMA(0,1,6,0,1,2,12)
-fit1 = arima(train_set, order=c(0,1,6), seasonal=list(order=c(0,1,2), period=12))
+# SARIMA(0,1,10,0,1,3,12)
+fit1 = arima(train_set, order=c(0,1,10), seasonal=list(order=c(0,1,3), period=12))
 tsdiag(fit1)
 
-# SARIMA(0,1,6,0,1,0,12)
-fit2 = arima(train_set, order=c(0,1,6), seasonal=list(order=c(0,1,0), period=12))
+# SARIMA(0,1,10,0,1,0,12)
+fit2 = arima(train_set, order=c(0,1,10), seasonal=list(order=c(0,1,0), period=12))
 tsdiag(fit2)
 
-# SARIMA(4,1,0,0,1,2,12)
-fit3 = arima(train_set, order=c(4,1,0), seasonal=list(order=c(0,1,2), period=12))
+# SARIMA(8,1,0,0,1,3,12)
+fit3 = arima(train_set, order=c(8,1,0), seasonal=list(order=c(0,1,3), period=12))
 tsdiag(fit3)
 
-# SARIMA(4,1,0,0,1,0,12)
-fit4 = arima(train_set, order=c(4,1,0), seasonal=list(order=c(0,1,0), period=12))
+# SARIMA(8,1,0,0,1,0,12)
+fit4 = arima(train_set, order=c(8,1,0), seasonal=list(order=c(0,1,0), period=12))
 tsdiag(fit4)
 
 # Check AIC
-print(fit1) # AIC: 421.66
-print(fit2) # AIC: 424.26
-print(fit3) # AIC: 421.85
-print(fit4) # AIC: 424.66
-# fit1 has lowest AIC 
+print(fit1) # AIC: -561.43
+print(fit2) # AIC: -541.05
+print(fit3) # AIC: -564.14
+print(fit4) # AIC: -531.31
+# fit3 has lowest AIC 
 
 # Select Fit
-# SARIMA(0,1,6,0,1,2,12)
-fit_select=fit1
+# SARIMA(8,1,0,0,1,3,12)
+fit_select=fit3
 
 # View ACF of Residuals
 acf(residuals(fit_select), lag.max = 50)
 
-# Significant residual at lag-20, add 8 to q 
-fit_select = arima(train_set, order=c(0,1,14), seasonal=list(order=c(0,1,2), period=12))
-print(fit_select) # AIC improves from 421.66 to 420.3
+# Significant residual at lag-37, add 1 to q 
+fit_select = arima(train_set, order=c(8,1,1), seasonal=list(order=c(0,1,3), period=12))
+print(fit_select) 
 tsdiag(fit_select) # Ensure model is adequate
 
 # Plot Time Series
@@ -83,18 +90,18 @@ axis(1, at=c(1, 50, 100, 150, 200), labels=dates)
 lines(1:204, data$value, type="l")
 
 # Fitted Model
-fitted_model = train_set-fit_select$residual
+fitted_model = InvBoxCox(train_set-fit_select$residual, lambda=lambda)
 
 # Plot fitted model with red line
 lines(1:192, fitted_model, type="l", col="red")
 
 
 # Forecast for 3 years ahead
-forecast = predict(fit_select, n.ahead=12)
-forecast_line = c(fitted_model[192],forecast$pred)
+forecast_pred = InvBoxCox(predict(fit_select, n.ahead=12)$pred, lambda=lambda)
+forecast_line = c(fitted_model[192], forecast_pred)
 lines(192:204, forecast_line, col="purple")
-lines(193:204, forecast$pred, type="o", col="purple")
+lines(193:204, forecast_pred, type="o", col="purple")
 
 # Print Overall Accuracy
 library(forecast)
-print(accuracy(c(fitted_model, forecast$pred), full_set))
+print(accuracy(c(fitted_model, forecast_pred), full_set))
