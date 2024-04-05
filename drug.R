@@ -19,18 +19,18 @@ len_valid = 12 # 12 for 1 year forecast
 train_set = head(full_set, len_fullset-len_valid)
 valid_set = tail(full_set, len_valid)
 
-# Find Lambda for Box Cox 
+# Find Lambda for Box-Cox 
 library(forecast)
 lambda = BoxCox.lambda(train_set)
 print(paste0("Lambda: ", lambda))
 
-# Apply Box Cox Transformation to Remove Increasing Variance
+# Apply Box-Cox Transformation to Remove Increasing Variance
 train_set = BoxCox(train_set,lambda)
 # Plot Time Series after Box-Cox Transformation
 plot(1:192,y = train_set, xlim=c(1,192), ylim=c(0.5,3.5), main = "Time Series after Box-Cox Transformation")
 lines(1:192, train_set, type="l")
 
-# Apply Lag-12 Differencing to Remove Seasonality Component
+# Apply Lag-12 Differencing to Remove Seasonal Component
 D1 = diff(train_set, lag=12)
 # Plot Time Series after Differencing
 plot(1:180,y = D1, xlim=c(1,180), ylim=c(-0.3,0.3), main = "Time Series after Differencing (d=0, D=1)")
