@@ -19,12 +19,12 @@ len_valid = 12 # 12 for 1 year forecast
 train_set = head(full_set, len_fullset-len_valid)
 valid_set = tail(full_set, len_valid)
 
-# Find Box Cox
+# Find Lambda for Box Cox 
 library(forecast)
 lambda = BoxCox.lambda(train_set)
 print(paste0("Lambda: ", lambda))
 
-# Apply Box Cox Transformation
+# Apply Box Cox Transformation to Remove Increasing Variance
 train_set = BoxCox(train_set,lambda)
 # Plot Time Series After Box-Cox Transformation
 plot(1:192,y = train_set, xlim=c(1,192), ylim=c(0.5,3.5), main = "Time Series After Box-Cox Transformation")
@@ -78,11 +78,12 @@ print(fit4) # AIC: -531.31
 # SARIMA(8,1,0,0,1,6,12)
 fit_select=fit3
 
+
 # View ACF of Residuals
 acf(residuals(fit_select), lag.max = 100) # Residuals not significant
 
 
-# Plot Time Series
+# Plot Original Time Series
 dates = c(data$date[1], data$date[50], data$date[100], data$date[150], data$date[200])
 plot(1:204,y = data$value, xlim=c(1,210), ylim=c(0,40), xlab = "Year-Month", ylab = "Drug Sales", main = "Monthly Drug Sales", xaxt="n")
 axis(1, at=c(1, 50, 100, 150, 200), labels=dates)
@@ -91,11 +92,10 @@ lines(1:204, data$value, type="l")
 # Fitted Model
 fitted_model = InvBoxCox(train_set-fit_select$residual, lambda=lambda)
 
-# Plot fitted model with red line
+# Add fitted model as red line to plot
 lines(1:192, fitted_model, type="l", col="red")
 
-
-# Forecast for 3 years ahead
+# Forecast for 3 years ahead and add to plot
 forecast_pred = InvBoxCox(predict(fit_select, n.ahead=12)$pred, lambda=lambda)
 forecast_line = c(fitted_model[192], forecast_pred)
 lines(192:204, forecast_line, col="purple")
