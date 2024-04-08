@@ -67,11 +67,20 @@ tsdiag(fit3)
 fit4 = arima(train_set, order=c(8,1,0), seasonal=list(order=c(0,1,0), period=12))
 tsdiag(fit4)
 
-# Check AIC
-print(fit1) # AIC: -557.67
-print(fit2) # AIC: -541.05
-print(fit3) # AIC: -560.1
-print(fit4) # AIC: -531.31
+# Compare AIC
+print("Compare AIC Values")
+print(AIC(fit1)) # AIC: -557.67
+print(AIC(fit2)) # AIC: -541.05
+print(AIC(fit3)) # AIC: -560.1
+print(AIC(fit4)) # AIC: -531.31
+# fit3 has lowest AIC
+
+# Compare BIC
+print("Compare BIC Values")
+print(BIC(fit1)) # BIC: -503.4869
+print(BIC(fit2)) # BIC: -505.986
+print(BIC(fit3)) # BIC: -512.2897
+print(BIC(fit4)) # BIC: -502.6282
 # fit3 has lowest AIC 
 
 # Select Fit
