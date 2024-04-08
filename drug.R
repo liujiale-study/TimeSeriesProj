@@ -95,7 +95,7 @@ fitted_model = InvBoxCox(train_set-fit_select$residual, lambda=lambda)
 # Add fitted model as red line to plot
 lines(1:192, fitted_model, type="l", col="red")
 
-# Forecast for 3 years ahead and add to plot
+# Forecast for 1 year ahead and add to plot
 forecast_pred = InvBoxCox(predict(fit_select, n.ahead=12)$pred, lambda=lambda)
 forecast_line = c(fitted_model[192], forecast_pred)
 lines(192:204, forecast_line, col="purple")
