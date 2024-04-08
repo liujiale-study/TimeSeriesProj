@@ -81,7 +81,7 @@ print(BIC(fit1)) # BIC: -503.4869
 print(BIC(fit2)) # BIC: -505.986
 print(BIC(fit3)) # BIC: -512.2897
 print(BIC(fit4)) # BIC: -502.6282
-# fit3 has lowest AIC 
+# fit3 has lowest BIC 
 
 # Select Fit
 # SARIMA(8,1,0,0,1,6,12)
