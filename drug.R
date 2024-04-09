@@ -112,3 +112,13 @@ lines(193:204, forecast_pred, type="o", col="purple")
 
 # Print Overall Accuracy
 print(accuracy(c(fitted_model, forecast_pred), full_set))
+
+yearforecast = InvBoxCox(predict(fit_select, n.ahead=24)$pred, lambda=lambda)
+yearforecastline = c(fitted_model[192], hehehe)
+dates = c(data$date[1], data$date[50], data$date[100], data$date[150], data$date[200])
+plot(1:204,y = data$value, xlim=c(1,210), ylim=c(0,40), xlab = "Year-Month", ylab = "Drug Sales", main = "Monthly Drug Sales", xaxt="n")
+axis(1, at=c(1, 50, 100, 150, 200), labels=dates)
+lines(1:204, data$value, type="l")
+lines(1:192, fitted_model, type="l", col="red")
+lines(192:216, yearforecastline, col="purple")
+lines(193:216, yearforecast, type="o", col="purple")
